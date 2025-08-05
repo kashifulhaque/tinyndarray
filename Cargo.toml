@@ -2,13 +2,26 @@
 name = "tinyndarray"
 version = "0.1.0"
 edition = "2024"
+build = "build.rs"
+
+[dependencies]
+pyo3 = { version = "0.21", features = ["extension-module"] }
+rayon = "1.10.0"
+matrixmultiply = "0.3.10"
+ndarray = "0.15"
+ndarray-npy = "0.8"
+numpy = { version = "0.21" }
+
+# Use CBLAS for matmul
+cblas = "0.1.5"
+
+[build-dependencies]
+# Link against OpenBLAS, which includes CBLAS symbols
+blas-src = { version = "0.9", features = ["openblas"] }
 
 [lib]
 name = "tinyndarray"
 crate-type = ["cdylib"]
-
-[dependencies]
-pyo3 = { version = "0.21", features = ["extension-module"] }
 
 [package.metadata.maturin]
 name = "tinyndarray"

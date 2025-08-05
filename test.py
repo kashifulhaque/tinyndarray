@@ -44,3 +44,63 @@ print("a:", a)
 print("b:", b)
 print("c (a + b):", c)
 print("----- ----- ----- -----")
+
+print("----- ----- ----- -----")
+a = tnp.NdArray.ones([2, 3])
+b = tnp.NdArray.ones([1, 3])
+c = a + b  # ➜ works via __add__
+print(c)
+print("----- ----- ----- -----")
+
+print("----- ----- ----- -----")
+a = tnp.NdArray.ones([2, 3])
+b = tnp.NdArray.ones([1, 3]) * 2.0
+
+print("a + b =", (a + b))
+print("a - b =", (a - b))
+print("a * b =", (a * b))
+print("a / b =", (a / b))
+print("----- ----- ----- -----")
+
+print("----- ----- ----- -----")
+a = tnp.NdArray.ones([2, 3])
+print(a + 2.0)
+print(a * 5.0)
+print(a / 2.0)
+print(a - 1.0)
+print("----- ----- ----- -----")
+
+print("----- ----- ----- -----")
+a = tnp.NdArray.from_list(
+  [
+    [1.0, 2.0, 3.0],
+    [4.0, 5.0, 6.0]
+  ]
+)
+
+print("Original:")
+print(a)
+
+print("Transposed:")
+print(a.transpose())
+print("----- ----- ----- -----")
+
+print("----- ----- ----- -----")
+a = tnp.NdArray.from_list([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+print("Python list:", a.to_list())
+
+t = a.transpose()
+print("Transposed list:", t.to_list())
+print("----- ----- ----- -----")
+
+import numpy as np
+print("----- ----- ----- -----")
+print("From Numpy")
+a_np = np.ones((2, 3), dtype=np.float32)
+a_rust = tnp.NdArray.from_numpy(a_np)
+
+print("To Numpy")
+a_back = a_rust.to_numpy()
+print(a_back)
+
+print("----- ----- ----- -----")

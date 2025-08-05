@@ -1,3 +1,4 @@
+import numpy as np
 import tinyndarray as tnp
 
 a = tnp.NdArray([2, 3])
@@ -93,7 +94,6 @@ t = a.transpose()
 print("Transposed list:", t.to_list())
 print("----- ----- ----- -----")
 
-import numpy as np
 print("----- ----- ----- -----")
 print("From Numpy")
 a_np = np.ones((2, 3), dtype=np.float32)
@@ -102,5 +102,14 @@ a_rust = tnp.NdArray.from_numpy(a_np)
 print("To Numpy")
 a_back = a_rust.to_numpy()
 print(a_back)
+
+a = np.array([[1, 2], [3, 4]], dtype=np.float32)
+b = tnp.NdArray.from_numpy(a)
+c = b.to_numpy()
+
+print("Original NumPy:\n", a)
+print("Back from Rust:\n", c)
+
+print("Equal?", np.allclose(a, c))
 
 print("----- ----- ----- -----")

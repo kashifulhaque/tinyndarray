@@ -1,2 +1,9 @@
 [tools]
 rust = "latest"
+
+[tasks]
+check = "cargo check"
+build = "cargo build"
+develop = "uv run maturin develop --release --uv"
+test = "uv run test.py"
+bench = "uv run bench_matmul.py"

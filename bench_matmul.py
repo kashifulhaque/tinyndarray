@@ -40,27 +40,22 @@ def check_correctness(a_list, b_list):
   return True
 
 if __name__ == "__main__":
-  shape = (200, 300, 400)  # A: 200x300, B: 300x400
+  shape = (4096, 2048, 1024)  # A: 4096x2048, B: 2048x1024
   print(f"Running benchmark for shape: {shape[0]}x{shape[1]} @ {shape[1]}x{shape[2]}")
 
   a_list = random_matrix(shape[0], shape[1])
   b_list = random_matrix(shape[1], shape[2])
 
-  # Correctness check
-  print("Checking correctness...", end="")
+  print("Checking correctness...", end=" ")
   if check_correctness(a_list, b_list):
-    print("✅ Passed")
+    print("Passed")
   else:
-    print("❌ Failed")
+    print("Failed")
     exit(1)
 
-  # Time NumPy
-  print("Benchmarking NumPy...")
   np_time = time_numpy(np.array(a_list), np.array(b_list))
   print(f"NumPy time: {np_time:.4f}s")
 
-  # Time tinyndarray
-  print("Benchmarking tinyndarray (Rust)...")
   tnp_time = time_tinyndarray(a_list, b_list)
   print(f"tinyndarray time: {tnp_time:.4f}s")
 

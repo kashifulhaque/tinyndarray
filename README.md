@@ -1,4 +1,4 @@
-# **[WIP] A tiny numpy-like library for python, written in rust**
+# **[WIP] ferray - A tiny numpy-like library for python, written in rust**
 > To learn the inner workings of numpy
 
 ## **Prerequisites**

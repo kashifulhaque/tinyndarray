@@ -1,7 +1,7 @@
-use pyo3::prelude::*;
+use numpy::{PyArrayDyn, PyReadonlyArrayDyn};
 use pyo3::exceptions;
+use pyo3::prelude::*;
 use pyo3::types::PyList;
-use numpy::{PyReadonlyArrayDyn, PyArrayDyn};
 
 use crate::array::NdArray;
 use crate::utils::compute_strides;
@@ -85,10 +85,7 @@ pub fn from_numpy(py_array: PyReadonlyArrayDyn<f32>) -> PyResult<NdArray> {
     })
 }
 
-pub fn to_numpy<'py>(
-    array: &NdArray,
-    py: Python<'py>,
-) -> PyResult<Bound<'py, PyArrayDyn<f32>>> {
+pub fn to_numpy<'py>(array: &NdArray, py: Python<'py>) -> PyResult<Bound<'py, PyArrayDyn<f32>>> {
     let ndarray = ndarray::Array::from_shape_vec(array.shape.clone(), array.data.clone())
         .map_err(|_| PyErr::new::<exceptions::PyValueError, _>("Invalid shape for array"))?;
     Ok(PyArrayDyn::from_owned_array_bound(py, ndarray))

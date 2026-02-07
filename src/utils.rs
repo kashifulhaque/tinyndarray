@@ -1,5 +1,5 @@
-use pyo3::prelude::*;
 use pyo3::exceptions;
+use pyo3::prelude::*;
 
 pub fn compute_strides(shape: &[usize]) -> Vec<usize> {
     let mut strides = vec![1; shape.len()];
@@ -44,7 +44,9 @@ pub fn broadcast_shapes(
                 o_strides[i] = 0;
             }
             _ => {
-                return Err(exceptions::PyValueError::new_err("Shapes are not broadcastable"));
+                return Err(exceptions::PyValueError::new_err(
+                    "Shapes are not broadcastable",
+                ));
             }
         }
     }
@@ -65,12 +67,6 @@ pub fn ravel_index(indices: &[usize], strides: &[usize], shape: &[usize]) -> usi
         .iter()
         .zip(strides.iter())
         .zip(shape.iter())
-        .map(|((&i, &s), &dim)| {
-            if dim == 1 {
-                0
-            } else {
-                i * s
-            }
-        })
+        .map(|((&i, &s), &dim)| if dim == 1 { 0 } else { i * s })
         .sum()
 }

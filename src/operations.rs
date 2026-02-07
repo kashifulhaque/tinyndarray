@@ -1,9 +1,9 @@
-use pyo3::prelude::*;
+use cblas::{sgemm, Layout, Transpose};
 use pyo3::exceptions;
-use cblas::{Layout, Transpose, sgemm};
+use pyo3::prelude::*;
 
 use crate::array::NdArray;
-use crate::utils::{compute_strides, broadcast_shapes, unravel_index, ravel_index};
+use crate::utils::{broadcast_shapes, compute_strides, ravel_index, unravel_index};
 
 pub fn mul_array(left: &NdArray, right: &NdArray) -> PyResult<NdArray> {
     let (broadcast_shape, self_strides, other_strides) =
@@ -126,7 +126,9 @@ pub fn matmul(left: &NdArray, right: &NdArray) -> PyResult<NdArray> {
     let (k2, n) = (right.shape[0], right.shape[1]);
 
     if k1 != k2 {
-        return Err(PyErr::new::<exceptions::PyValueError, _>("Shape mismatch for matmul."));
+        return Err(PyErr::new::<exceptions::PyValueError, _>(
+            "Shape mismatch for matmul.",
+        ));
     }
 
     let mut result_data = vec![0.0f32; m * n];

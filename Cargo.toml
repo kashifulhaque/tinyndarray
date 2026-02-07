@@ -1,5 +1,5 @@
 [package]
-name = "tinyndarray"
+name = "ferray"
 version = "0.1.0"
 edition = "2021"
 build = "build.rs"
@@ -20,8 +20,8 @@ cblas = "0.1.5"
 blas-src = { version = "0.9", features = ["openblas"] }
 
 [lib]
-name = "tinyndarray"
+name = "ferray"
 crate-type = ["cdylib"]
 
 [package.metadata.maturin]
-name = "tinyndarray"
+name = "ferray"

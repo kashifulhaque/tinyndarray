@@ -1,11 +1,11 @@
-use pyo3::prelude::*;
 use pyo3::exceptions;
-use pyo3::types::{PyType, PyAny};
+use pyo3::prelude::*;
+use pyo3::types::{PyAny, PyType};
 use pyo3::Bound;
 
-use crate::operations;
-use crate::utils::{compute_strides};
 use crate::conversions::{parse_nested_list, to_nested_list};
+use crate::operations;
+use crate::utils::compute_strides;
 
 #[pyclass]
 #[derive(Clone)]
@@ -18,7 +18,11 @@ pub struct NdArray {
 impl NdArray {
     pub fn new_with_data(data: Vec<f32>, shape: Vec<usize>) -> Self {
         let strides = compute_strides(&shape);
-        NdArray { data, shape, strides }
+        NdArray {
+            data,
+            shape,
+            strides,
+        }
     }
 }
 
@@ -42,7 +46,11 @@ impl NdArray {
         let size = shape.iter().product();
         let data = vec![0.0; size];
         let strides = compute_strides(&shape);
-        Ok(NdArray { data, shape, strides })
+        Ok(NdArray {
+            data,
+            shape,
+            strides,
+        })
     }
 
     fn ndim(&self) -> usize {
@@ -55,7 +63,9 @@ impl NdArray {
 
     fn get(&self, indices: Vec<usize>) -> PyResult<f32> {
         if indices.len() != self.shape.len() {
-            return Err(exceptions::PyIndexError::new_err("Incorrect number of indices"));
+            return Err(exceptions::PyIndexError::new_err(
+                "Incorrect number of indices",
+            ));
         }
 
         let flat_idx: usize = self
@@ -65,14 +75,17 @@ impl NdArray {
             .map(|(s, i)| s * i)
             .sum();
 
-        self.data.get(flat_idx).copied().ok_or_else(|| {
-            exceptions::PyIndexError::new_err("Index out of bounds")
-        })
+        self.data
+            .get(flat_idx)
+            .copied()
+            .ok_or_else(|| exceptions::PyIndexError::new_err("Index out of bounds"))
     }
 
     fn set(&mut self, indices: Vec<usize>, value: f32) -> PyResult<()> {
         if indices.len() != self.shape.len() {
-            return Err(exceptions::PyIndexError::new_err("Incorrect number of indices"))
+            return Err(exceptions::PyIndexError::new_err(
+                "Incorrect number of indices",
+            ));
         }
 
         let flat_idx: usize = self
@@ -99,7 +112,11 @@ impl NdArray {
         let size = shape.iter().product();
         let data = vec![1.0; size];
         let strides = compute_strides(&shape);
-        Ok(NdArray { data, shape, strides })
+        Ok(NdArray {
+            data,
+            shape,
+            strides,
+        })
     }
 
     #[classmethod]
@@ -111,7 +128,11 @@ impl NdArray {
         let size = shape.iter().product();
         let data = vec![0.0; size];
         let strides = compute_strides(&shape);
-        Ok(NdArray { data, shape, strides })
+        Ok(NdArray {
+            data,
+            shape,
+            strides,
+        })
     }
 
     fn reshape(&mut self, new_shape: Vec<usize>) -> PyResult<()> {
@@ -120,7 +141,7 @@ impl NdArray {
 
         if old_size != new_size {
             return Err(exceptions::PyValueError::new_err(
-                "Total size must remain unchanged when reshaping"
+                "Total size must remain unchanged when reshaping",
             ));
         }
 
@@ -139,7 +160,9 @@ impl NdArray {
         } else if let Ok(scalar) = other.extract::<f32>() {
             operations::mul_scalar(self, scalar)
         } else {
-            Err(exceptions::PyTypeError::new_err("Unsupported operand for *"))
+            Err(exceptions::PyTypeError::new_err(
+                "Unsupported operand for *",
+            ))
         }
     }
 
@@ -149,7 +172,9 @@ impl NdArray {
         } else if let Ok(scalar) = other.extract::<f32>() {
             operations::add_scalar(self, scalar)
         } else {
-            Err(exceptions::PyTypeError::new_err("Unsupported operand for +"))
+            Err(exceptions::PyTypeError::new_err(
+                "Unsupported operand for +",
+            ))
         }
     }
 
@@ -159,7 +184,9 @@ impl NdArray {
         } else if let Ok(scalar) = other.extract::<f32>() {
             operations::sub_scalar(self, scalar)
         } else {
-            Err(exceptions::PyTypeError::new_err("Unsupported operand for -"))
+            Err(exceptions::PyTypeError::new_err(
+                "Unsupported operand for -",
+            ))
         }
     }
 
@@ -169,7 +196,9 @@ impl NdArray {
         } else if let Ok(scalar) = other.extract::<f32>() {
             operations::div_scalar(self, scalar)
         } else {
-            Err(exceptions::PyTypeError::new_err("Unsupported operand for /"))
+            Err(exceptions::PyTypeError::new_err(
+                "Unsupported operand for /",
+            ))
         }
     }
 
@@ -198,7 +227,7 @@ impl NdArray {
         } else if let Ok(t) = indices.extract::<(usize, usize)>() {
             vec![t.0, t.1]
         } else {
-            return Err(exceptions::PyTypeError::new_err("Invalid index format"))
+            return Err(exceptions::PyTypeError::new_err("Invalid index format"));
         };
         self.get(indices)
     }
@@ -211,7 +240,7 @@ impl NdArray {
         } else if let Ok(t) = indices.extract::<(usize, usize)>() {
             vec![t.0, t.1]
         } else {
-            return Err(exceptions::PyTypeError::new_err("Invalid index format"))
+            return Err(exceptions::PyTypeError::new_err("Invalid index format"));
         };
         self.set(indices, value)
     }

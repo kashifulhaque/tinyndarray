@@ -1,15 +1,12 @@
 import numpy as np
-import tinyndarray as tnp
+import ferray as tnp
 
 a = tnp.NdArray([2, 3])
 print("ndim:", a.ndim())
 print("shape:", a.shape())
 print("before", a.get([0, 1]))
 
-a.set(
-  [0, 1],
-  42.0
-)
+a.set([0, 1], 42.0)
 
 print("after:", a.get([0, 1]))
 print(a)
@@ -72,12 +69,7 @@ print(a - 1.0)
 print("----- ----- ----- -----")
 
 print("----- ----- ----- -----")
-a = tnp.NdArray.from_list(
-  [
-    [1.0, 2.0, 3.0],
-    [4.0, 5.0, 6.0]
-  ]
-)
+a = tnp.NdArray.from_list([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
 
 print("Original:")
 print(a)

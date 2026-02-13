@@ -35,7 +35,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: ["3.12"]
     steps:
       - uses: actions/checkout@v4
 
@@ -47,13 +46,11 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install openblas
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
 
       - name: Install maturin
-        run: pip install maturin
+        run: uv tool install maturin
 
       - name: Build wheel
         run: maturin build --release
@@ -61,5 +58,5 @@ jobs:
       - name: Upload wheel
         uses: actions/upload-artifact@v4
         with:
-          name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
+          name: wheel-${{ matrix.os }}
           path: target/wheels/*.whl

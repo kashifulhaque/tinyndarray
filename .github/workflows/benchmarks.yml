@@ -23,20 +23,14 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
-        run: |
-          pip install maturin numpy
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
 
       - name: Build ferray
-        run: maturin develop --release
+        run: uv run maturin develop --release --uv
 
       - name: Run benchmarks
-        run: python benchmarks/bench_matmul.py | tee benchmark_results.txt
+        run: uv run python benchmarks/bench_matmul.py | tee benchmark_results.txt
 
       - name: Generate benchmark report
         run: |

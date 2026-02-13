@@ -1,13 +1,11 @@
-FROM rust:1.83-bookworm AS builder
-
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm AS builder
 
 RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-dev \
-    python3-venv \
     libopenblas-dev \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:$PATH"
 
 WORKDIR /app
 COPY . .
@@ -15,9 +13,7 @@ COPY . .
 RUN uv sync
 RUN uv run maturin develop --release --uv
 
-FROM python:3.12-slim-bookworm
-
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 RUN apt-get update && apt-get install -y \
     libopenblas0 \

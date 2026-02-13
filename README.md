@@ -21,7 +21,7 @@ ferray/
 ├── pyproject.toml        # Python package metadata (maturin build system)
 ├── build.rs              # Build script (OpenBLAS linking)
 ├── Dockerfile            # Container image for building & running
-└── docker-compose.yml    # Docker Compose services (dev, test, bench)
+└── compose.yml           # Docker Compose services (dev, test, bench)
 ```
 
 ## Prerequisites

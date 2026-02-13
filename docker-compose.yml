@@ -3,13 +3,13 @@ services:
     build: .
     volumes:
       - .:/app
-    command: python tests/test_basic.py
+    command: uv run python tests/test_basic.py
 
   test:
     build: .
     command: >
-      sh -c "python tests/test_basic.py && python tests/test_shapes.py"
+      sh -c "uv run python tests/test_basic.py && uv run python tests/test_shapes.py"
 
   bench:
     build: .
-    command: python benchmarks/bench_matmul.py
+    command: uv run python benchmarks/bench_matmul.py

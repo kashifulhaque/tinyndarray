@@ -56,10 +56,10 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Install maturin
-        run: uv add maturin
+        run: uv tool install maturin
 
       - name: Build wheel
-        run: uv run maturin build --release --uv
+        run: uv tool run maturin build --release --uv
 
       - name: Upload wheel
         uses: actions/upload-artifact@v4

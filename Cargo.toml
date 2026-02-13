@@ -6,10 +6,7 @@ build = "build.rs"
 
 [dependencies]
 pyo3 = { version = "0.21", features = ["extension-module"] }
-rayon = "1.10.0"
-matrixmultiply = "0.3.10"
 ndarray = "0.15"
-ndarray-npy = "0.8"
 numpy = { version = "0.21" }
 
 # Use CBLAS for matmul

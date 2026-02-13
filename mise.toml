@@ -5,5 +5,5 @@ rust = "latest"
 check = "cargo check"
 build = "cargo build"
 develop = "uv run maturin develop --release --uv"
-test = "uv run test.py"
-bench = "uv run bench_matmul.py"
+test = { run = "uv run python tests/test_basic.py && uv run python tests/test_shapes.py", depends = ["develop"] }
+bench = { run = "uv run python benchmarks/bench_matmul.py", depends = ["develop"] }

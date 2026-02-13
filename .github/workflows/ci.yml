@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    name: Check & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install OpenBLAS
+        run: sudo apt-get update && sudo apt-get install -y libopenblas-dev
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Create venv
+        run: uv sync
+
+      - name: Cargo check
+        run: cargo check
+
+      - name: Cargo clippy
+        run: cargo clippy -- -D warnings
+
+      - name: Cargo fmt
+        run: cargo fmt -- --check
+
+  build:
+    name: Build wheels
+    needs: check
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install OpenBLAS (Ubuntu)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libopenblas-dev
+
+      - name: Install OpenBLAS (macOS)
+        if: runner.os == 'macOS'
+        run: brew install openblas
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install maturin
+        run: uv tool install maturin
+
+      - name: Build wheel
+        run: uv tool run maturin build --release --uv
+
+      - name: Upload wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}
+          path: target/wheels/*.whl

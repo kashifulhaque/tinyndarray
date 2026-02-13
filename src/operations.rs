@@ -11,11 +11,11 @@ pub fn mul_array(left: &NdArray, right: &NdArray) -> PyResult<NdArray> {
     let total_size: usize = broadcast_shape.iter().product();
     let mut result_data = vec![0.0; total_size];
 
-    for idx in 0..total_size {
+    for (idx, result) in result_data.iter_mut().enumerate() {
         let idx_multi = unravel_index(idx, &broadcast_shape);
         let self_idx = ravel_index(&idx_multi, &self_strides, &left.shape);
         let other_idx = ravel_index(&idx_multi, &other_strides, &right.shape);
-        result_data[idx] = left.data[self_idx] * right.data[other_idx];
+        *result = left.data[self_idx] * right.data[other_idx];
     }
 
     Ok(NdArray {
@@ -40,11 +40,11 @@ pub fn add_array(left: &NdArray, right: &NdArray) -> PyResult<NdArray> {
     let total_size: usize = broadcast_shape.iter().product();
     let mut result_data = vec![0.0; total_size];
 
-    for idx in 0..total_size {
+    for (idx, result) in result_data.iter_mut().enumerate() {
         let idx_multi = unravel_index(idx, &broadcast_shape);
         let self_idx = ravel_index(&idx_multi, &self_strides, &left.shape);
         let other_idx = ravel_index(&idx_multi, &other_strides, &right.shape);
-        result_data[idx] = left.data[self_idx] + right.data[other_idx];
+        *result = left.data[self_idx] + right.data[other_idx];
     }
 
     Ok(NdArray {
@@ -69,11 +69,11 @@ pub fn sub_array(left: &NdArray, right: &NdArray) -> PyResult<NdArray> {
     let total_size: usize = broadcast_shape.iter().product();
     let mut result_data = vec![0.0; total_size];
 
-    for idx in 0..total_size {
+    for (idx, result) in result_data.iter_mut().enumerate() {
         let idx_multi = unravel_index(idx, &broadcast_shape);
         let self_idx = ravel_index(&idx_multi, &self_strides, &left.shape);
         let other_idx = ravel_index(&idx_multi, &other_strides, &right.shape);
-        result_data[idx] = left.data[self_idx] - right.data[other_idx];
+        *result = left.data[self_idx] - right.data[other_idx];
     }
 
     Ok(NdArray {
@@ -98,11 +98,11 @@ pub fn div_array(left: &NdArray, right: &NdArray) -> PyResult<NdArray> {
     let total_size: usize = broadcast_shape.iter().product();
     let mut result_data = vec![0.0; total_size];
 
-    for idx in 0..total_size {
+    for (idx, result) in result_data.iter_mut().enumerate() {
         let idx_multi = unravel_index(idx, &broadcast_shape);
         let self_idx = ravel_index(&idx_multi, &self_strides, &left.shape);
         let other_idx = ravel_index(&idx_multi, &other_strides, &right.shape);
-        result_data[idx] = left.data[self_idx] / right.data[other_idx];
+        *result = left.data[self_idx] / right.data[other_idx];
     }
 
     Ok(NdArray {

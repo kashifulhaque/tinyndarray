@@ -1,0 +1,59 @@
+name: Benchmarks
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  benchmark:
+    name: Run Benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install OpenBLAS
+        run: sudo apt-get update && sudo apt-get install -y libopenblas-dev
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build ferray
+        run: uv run maturin develop --release --uv
+
+      - name: Run benchmarks
+        run: uv run python benchmarks/bench_matmul.py | tee benchmark_results.txt
+
+      - name: Generate benchmark report
+        run: |
+          echo "# Benchmark Results" > benchmark_report.md
+          echo "" >> benchmark_report.md
+          echo "**Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> benchmark_report.md
+          echo "**Commit:** ${{ github.sha }}" >> benchmark_report.md
+          echo "**Runner:** $(uname -s) $(uname -m)" >> benchmark_report.md
+          echo "" >> benchmark_report.md
+          echo '```' >> benchmark_report.md
+          cat benchmark_results.txt >> benchmark_report.md
+          echo '```' >> benchmark_report.md
+
+      - name: Upload benchmark report
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-report
+          path: |
+            benchmark_report.md
+            benchmark_results.txt
+
+      - name: Publish to wiki
+        uses: Andrew-Chen-Wang/github-wiki-action@v4
+        with:
+          path: benchmark_report.md
+          token: ${{ secrets.GITHUB_TOKEN }}

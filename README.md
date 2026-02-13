@@ -1,14 +1,38 @@
-# **[WIP] ferray - A tiny numpy-like library for python, written in rust**
-> To learn the inner workings of numpy
+# **[WIP] ferray — A tiny NumPy-like library for Python, written in Rust**
 
-## **Prerequisites**
+> To learn the inner workings of NumPy
 
-### **1. Install OpenBLAS**
+## Project Structure
+
+```
+ferray/
+├── src/                  # Rust source code
+│   ├── lib.rs            # Module entry point & PyO3 module definition
+│   ├── array.rs          # NdArray class (core data structure)
+│   ├── operations.rs     # Element-wise & matrix operations (add, mul, matmul, etc.)
+│   ├── conversions.rs    # Conversions between Python lists, NumPy arrays & NdArray
+│   └── utils.rs          # Stride computation, broadcasting, index utilities
+├── tests/                # Python tests
+│   ├── test_basic.py     # Core functionality tests
+│   └── test_shapes.py    # Matrix multiplication shape tests
+├── benchmarks/           # Performance benchmarks
+│   └── bench_matmul.py   # Matrix multiplication benchmark (ferray vs NumPy)
+├── Cargo.toml            # Rust package manifest
+├── pyproject.toml        # Python package metadata (maturin build system)
+├── build.rs              # Build script (OpenBLAS linking)
+├── Dockerfile            # Container image for building & running
+└── docker-compose.yml    # Docker Compose services (dev, test, bench)
+```
+
+## Prerequisites
+
+### 1. Install OpenBLAS
+
 This project depends on OpenBLAS for linear algebra operations.
 
 **Ubuntu/Debian:**
 ```bash
-sudo apt install libopenblas-dev
+sudo apt-get install libopenblas-dev
 ```
 
 **Fedora/RHEL:**
@@ -31,10 +55,12 @@ brew install openblas
 nix-shell -p openblas
 ```
 
-### **2. Install Rust**
+### 2. Install Rust
+
 Make sure you have the Rust toolchain installed: https://www.rust-lang.org/tools/install
 
-### **3. Install maturin**
+### 3. Install maturin
+
 Maturin is required to build this Rust-Python extension:
 
 ```bash
@@ -45,40 +71,76 @@ uv tool install maturin
 pip install maturin
 ```
 
-## **Setup**
-
-1. Clone this repo
-2. Create a virtual environment (optional but recommended)
-3. Build and install the package:
+## Building Locally
 
 ```bash
-# Using maturin directly
-maturin develop --release
+# Clone and enter the repository
+git clone https://github.com/kashifulhaque/ferray.git
+cd ferray
 
-# Or using uv
-uv run maturin develop --release
+# Create a virtual environment (recommended)
+python -m venv .venv
+source .venv/bin/activate   # Linux/macOS
+# .venv\Scripts\activate    # Windows
+
+# Install dependencies
+pip install maturin numpy
+
+# Build and install in development mode
+maturin develop --release
 ```
 
-## **Using mise (optional)**
+### Using uv (alternative)
+
+```bash
+uv run maturin develop --release --uv
+```
+
+## Running Locally
+
+After building, you can run:
+
+```bash
+# Run basic tests
+python tests/test_basic.py
+
+# Run shape-specific matmul tests
+python tests/test_shapes.py
+
+# Run benchmarks
+python benchmarks/bench_matmul.py
+```
+
+## Using Docker
+
+Build and run everything in a container — no local Rust or OpenBLAS needed:
+
+```bash
+# Run tests
+docker compose run test
+
+# Run benchmarks
+docker compose run bench
+
+# Interactive development
+docker compose run dev
+```
+
+## Using mise (optional)
 
 If you have [mise](https://mise.jdx.dev/) installed, you can use the provided tasks:
 
 ```bash
-# Build and install in development mode
-mise run develop
-
-# Run tests
-mise run test
-
-# Run benchmarks
-mise run bench
-
-# Check the code
-mise run check
+mise run check     # cargo check
+mise run build     # cargo build
+mise run develop   # Build & install with maturin
+mise run test      # Run all Python tests
+mise run bench     # Run benchmarks
 ```
 
-## **Manual Execution**
+## CI/CD
 
-After building, you can run:
-- [`bench_matmul.py`](./bench_matmul.py) - Matrix multiplication benchmarks
-- [`test.py`](./test.py) - Basic functionality tests
+This project uses GitHub Actions for:
+
+- **CI** (`ci.yml`): Runs `cargo check`, `clippy`, and `fmt` on every push/PR, then builds wheels for Linux and macOS.
+- **Benchmarks** (`benchmarks.yml`): Runs matmul benchmarks on push to `main` and publishes results to the repository wiki.

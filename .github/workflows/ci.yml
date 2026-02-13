@@ -19,6 +19,12 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Create venv
+        run: uv sync
+
       - name: Cargo check
         run: cargo check
 
